@@ -2,16 +2,22 @@ import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 import cookie from "cookie";
 
-const JWT_SECRET = process.env.JWT_SECRET || "mydefaulyjwtsecret"; // Use a strong secret in production
+const JWT_SECRET = process.env.JWT_SECRET || "mydefaultjwtsecret"; // Use a strong secret in production
 
 export function verifyJWT(req) {
   try {
     const cookies = req.headers.get("cookie") || "";
     const { token } = cookie.parse(cookies);
-    if (!token) {
+    const authHeader = req.headers.get("authorization") || "";
+    const bearerToken = authHeader.startsWith("Bearer ")
+      ? authHeader.slice("Bearer ".length)
+      : null;
+    const jwtToken = token || bearerToken;
+
+    if (!jwtToken) {
       return null;
     }
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(jwtToken, JWT_SECRET);
     return decoded;
   } catch (err) {
     return null;
