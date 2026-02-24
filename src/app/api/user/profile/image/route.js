@@ -2,7 +2,7 @@ import { verifyJWT } from "@/lib/auth";
 import corsHeaders from "@/lib/cors";
 import { getClientPromise } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import path from "path";
 import fs from "fs/promises";
 
@@ -110,7 +110,7 @@ export async function POST(req) {
     }
 
     const ext = getImageExtension(imageMimeType);
-    const filename = `${uuidv4()}.${ext}`;
+    const filename = `${randomUUID()}.${ext}`;
     const uploadDir = path.join(process.cwd(), "public", "profile-images");
     const savePath = path.join(uploadDir, filename);
 
